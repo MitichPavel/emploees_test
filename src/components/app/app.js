@@ -1,24 +1,64 @@
+import { Component } from 'react';
+
 import AppInfo from '../app-info/app-info';
 import SearchPanel from '../search-panel/search-panel';
 import AppFilter from '../app-filter/app-filter';
 import EmployeesList from '../employees-list/employees-list';
 import EmployeesAddForm from '../employees-add-form/employees-add-form';
+
+import nextId from "react-id-generator";
+
 import './app.css';
 
-function App() {
-    return (
-        <div className="app">
-            <AppInfo/>
+class App extends Component {
+    constructor(props) {
+        super(props);
 
-            <div className="search-panel">
-                <SearchPanel/>
-                <AppFilter/>
+        this.state = {
+            data: [
+                {name: 'John C.', salary: 800, increase: false, id: nextId()},
+                {name: 'Alex M.', salary: 3000, increase: true, id: nextId()},
+                {name: 'Carl W.', salary: 5000, increase: false, id: nextId()}
+            ]
+        }
+    }
+
+    deleteItem = (id) => {
+        this.setState(({data}) => {
+            return {
+                data: data.filter(item => item.id !== id)
+            }
+        })
+    }
+
+    addItem = (item) => {
+        this.setState(({data}) => {
+            return {
+                data: [...data, { ...item, increase: false, id: nextId() }]
+            }
+        })
+    }
+
+    render() {
+        return (
+            <div className="app">
+                <AppInfo/>
+    
+                <div className="search-panel">
+                    <SearchPanel/>
+                    <AppFilter/>
+                </div>
+    
+                <EmployeesList
+                    data={this.state.data}
+                    onDelete={this.deleteItem}/>
+                <EmployeesAddForm
+                    data={this.state.data}
+                    onAdd={this.addItem}
+                    />
             </div>
-
-            <EmployeesList/>
-            <EmployeesAddForm/>
-        </div>
-    )
+        )
+    }
 }
 
 export default App;
