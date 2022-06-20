@@ -16,9 +16,9 @@ class App extends Component {
 
         this.state = {
             data: [
-                {name: 'John C.', salary: 800, increase: false, id: nextId()},
-                {name: 'Alex M.', salary: 3000, increase: true, id: nextId()},
-                {name: 'Carl W.', salary: 5000, increase: false, id: nextId()}
+                {name: 'John C.', salary: 800, increase: false, rise: false, id: nextId()},
+                {name: 'Alex M.', salary: 3000, increase: true, rise: false, id: nextId()},
+                {name: 'Carl W.', salary: 5000, increase: false, rise: false, id: nextId()}
             ]
         }
     }
@@ -34,15 +34,39 @@ class App extends Component {
     addItem = (item) => {
         this.setState(({data}) => {
             return {
-                data: [...data, { ...item, increase: false, id: nextId() }]
+                data: [...data, { ...item, increase: false, rise: false, id: nextId() }]
             }
         })
+    }
+
+    onToggleIncrease = (id) => {
+        this.setState(({data}) => ({
+            data: data.map((item) => {
+                if (item.id === id) {
+                    return {...item, increase: !item.increase}
+                }
+
+                return item;
+            })
+        }));
+    }
+
+    onToggleRise = (id) => {
+        this.setState(({data}) => ({
+            data: data.map((item) => {
+                if (item.id === id) {
+                    return {...item, rise: !item.rise}
+                }
+
+                return item;
+            })
+        }));
     }
 
     render() {
         return (
             <div className="app">
-                <AppInfo/>
+                <AppInfo data={this.state.data}/>
     
                 <div className="search-panel">
                     <SearchPanel/>
@@ -51,7 +75,9 @@ class App extends Component {
     
                 <EmployeesList
                     data={this.state.data}
-                    onDelete={this.deleteItem}/>
+                    onDelete={this.deleteItem}
+                    onToggleIncrease={this.onToggleIncrease}
+                    onToggleRise={this.onToggleRise}/>
                 <EmployeesAddForm
                     data={this.state.data}
                     onAdd={this.addItem}
