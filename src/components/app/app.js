@@ -19,7 +19,9 @@ class App extends Component {
                 {name: 'John C.', salary: 800, increase: false, rise: false, id: nextId()},
                 {name: 'Alex M.', salary: 3000, increase: true, rise: false, id: nextId()},
                 {name: 'Carl W.', salary: 5000, increase: false, rise: false, id: nextId()}
-            ]
+            ],
+            term: '',
+            filter: 'all',
         }
     }
 
@@ -51,24 +53,60 @@ class App extends Component {
         }));
     }
 
+    searchEmp = (items, term) => {
+        if (term.length === 0) {
+            return items;
+        }
+
+        return items.filter(item => {
+            return item.name.indexOf(term) > -1
+        })
+    }
+
+    onSearch = (term) => {
+        this.setState({ term });
+    }
+
+    onToogleFilter = (data) => {
+        this.setState({ data })
+    }
+
+    filterPost = (items, filter) => {
+        const opts = {
+            all: () => items,
+            increase: () => items.filter((item) => item.increase),
+            salary: () => items.filter((item) => item.salary > 1000),
+        }
+
+        return opts[filter]();
+    }
+
+    onToogleFilter = (filter) => {
+        this.setState({ filter })
+    }
+
     render() {
+        const { data, term, filter } = this.state;
+        const visibleData = this.filterPost(this.searchEmp(data, term), filter);
+
         return (
             <div className="app">
-                <AppInfo data={this.state.data}/>
+                <AppInfo data={data}/>
     
                 <div className="search-panel">
-                    <SearchPanel/>
-                    <AppFilter/>
+                    <SearchPanel onSearch={this.onSearch}/>
+                    <AppFilter onToogleFilter={this.onToogleFilter}/>
                 </div>
     
                 <EmployeesList
-                    data={this.state.data}
+                    data={visibleData}
                     onDelete={this.deleteItem}
-                    onToggleProp={this.onToggleProp}/>
+                    onToggleProp={this.onToggleProp}
+                />
                 <EmployeesAddForm
-                    data={this.state.data}
+                    data={data}
                     onAdd={this.addItem}
-                    />
+                />
             </div>
         )
     }
