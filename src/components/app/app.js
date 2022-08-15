@@ -67,10 +67,6 @@ class App extends Component {
     this.setState({ term });
   }
 
-  onToogleFilter = (data) => {
-    this.setState({ data })
-  }
-
   filterPost = (items, filter) => {
     const opts = {
       all: () => items,
